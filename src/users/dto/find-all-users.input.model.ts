@@ -3,9 +3,9 @@ import { IsNumberString, IsOptional } from 'class-validator';
 export class FindAllUsersInputModel {
   @IsOptional()
   @IsNumberString()
-  from: string;
+  public from: string;
 
   @IsOptional()
   @IsNumberString()
-  size: string;
+  public size: string;
 }

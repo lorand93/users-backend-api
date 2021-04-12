@@ -32,11 +32,12 @@ export class UsersService {
   }
 
   public findOne(id: string) {
-    return this.usersRepository.findOne(id);
+    return this.usersRepository.findOne(+id);
   }
 
-  public update(id: string, updateUserDto: UpdateUserDto) {
-    const result = this.usersRepository.update(id, updateUserDto);
+  public async update(id: string, updateUserDto: UpdateUserDto) {
+    // because sqlite3 does not return a number of affected rows I have to check if the entry also exists
+    await this.usersRepository.update(id, updateUserDto);
     return this.usersRepository.findOne(id);
   }
 
