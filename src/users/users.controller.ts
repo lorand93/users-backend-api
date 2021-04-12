@@ -39,13 +39,13 @@ export class UsersController {
   public async findAll(@Query() params: FindAllUsersInputModel, @Response() response: Res) {
     if (params.from && !params.size) {
       return response.status(HttpStatus.BAD_REQUEST).json({
-        message: UsersApiMessages.MISSING_PAGEING_PARAMS,
+        message: UsersApiMessages.MISSING_PAGING_PARAMS,
       });
     }
 
     if (params.size && !params.from) {
       return response.status(HttpStatus.BAD_REQUEST).json({
-        message: UsersApiMessages.MISSING_PAGEING_PARAMS,
+        message: UsersApiMessages.MISSING_PAGING_PARAMS,
       });
     }
 
@@ -133,7 +133,31 @@ export class UsersController {
   }
 
   @Delete(':id')
-  public async remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  public async remove(
+    @Param('id') id: string,
+    @Response() response: Res,
+  ) {
+    if (!id || parseInt(id, 10) <= 0) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        message: UsersApiMessages.WRONG_ID_VALUE,
+        id,
+      });
+    }
+
+    try {
+      const result = await this.usersService.remove(id);
+      if(!result) {
+        return response.status(HttpStatus.BAD_REQUEST).json({
+          
+        })
+      }
+      return response.status(HttpStatus.OK).json(result);
+    } catch (e) {
+      console.error(`${UsersApiMessages.ERROR_WHILE_DELETING_USER} ${id}, error: ${e ? e.toString() : ''}`);
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: UsersApiMessages.ERROR_WHILE_DELETING_USER + id,
+        error: e ? e.toString() : '',
+      });
+    }
   }
 }
