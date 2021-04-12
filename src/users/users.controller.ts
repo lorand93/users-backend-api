@@ -13,7 +13,8 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {
+  }
 
   @Post()
   public async create(@Body() createUserDto: CreateUserDto) {
@@ -23,7 +24,8 @@ export class UsersController {
 
   @Get()
   public async findAll() {
-    return this.usersService.findAll();
+    const users = await this.usersService.findAll();
+    return users;
   }
 
   @Get(':id')
@@ -38,6 +40,6 @@ export class UsersController {
 
   @Delete(':id')
   public async remove(@Param('id') id: string) {
-    return this.usersService.delete(+id);
+    return this.usersService.remove(+id);
   }
 }
