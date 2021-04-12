@@ -1,6 +1,7 @@
 export enum UsersApiMessages {
   WRONG_ID_VALUE = 'Please use a positive value for the id',
-  NO_USER_UPDATED = 'No user was found to update',
+  NO_USER_UPDATED = 'No user was found to update for your id',
+  NO_USER_DELETED = 'No user was found to delete for your id',
   MISSING_PAGING_PARAMS = 'Please use the query params "from" and "size" concomitantly',
   PAGING_SIZE_TOO_LARGE = 'Please use a maximum page size of 100 objects',
   USER_NOT_FOUND = 'User not found!',

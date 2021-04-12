@@ -60,7 +60,7 @@ export class UsersController {
         parseInt(params.from, 10) || 0,
         parseInt(params.size, 10) || 10,
       );
-      response.status(HttpStatus.OK).json(result);
+      response.status(HttpStatus.CREATED).json(result);
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_GETTING_USERS}, error: ${e ? e.toString() : ''}`);
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -146,12 +146,14 @@ export class UsersController {
 
     try {
       const result = await this.usersService.remove(id);
-      if(!result) {
+      if (!result) {
         return response.status(HttpStatus.BAD_REQUEST).json({
-          
-        })
+          message: UsersApiMessages.NO_USER_DELETED,
+          id,
+        });
       }
-      return response.status(HttpStatus.OK).json(result);
+
+      return response.status(HttpStatus.ACCEPTED).json();
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_DELETING_USER} ${id}, error: ${e ? e.toString() : ''}`);
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
