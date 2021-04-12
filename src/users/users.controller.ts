@@ -5,11 +5,11 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  Delete, Query,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { UserDto } from './dto/user.dto';
+import { FindAllUsersInputModel } from './dto/find-all-users.input.model';
 
 @Controller('users')
 export class UsersController {
@@ -17,14 +17,17 @@ export class UsersController {
   }
 
   @Post()
-  public async create(@Body() createUserDto: CreateUserDto) {
+  public async create(@Body() createUserDto: UserDto) {
     const user = await this.usersService.create(createUserDto);
     return user;
   }
 
   @Get()
-  public async findAll() {
-    const users = await this.usersService.findAll();
+  public async findAll(@Query() params: FindAllUsersInputModel) {
+    const users = await this.usersService.findAll(
+      parseInt(params.from, 10) || 0,
+      parseInt(params.size, 10) || 10,
+    );
     return users;
   }
 
@@ -34,7 +37,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  public async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  public async update(@Param('id') id: string, @Body() updateUserDto: UserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
