@@ -38,11 +38,11 @@ export class UsersService {
     };
   }
 
-  public findOne(id: string) {
+  public async findOne(id: string) {
     if (!id) {
       throw new Error(UserServiceErrorMessages.INVALID_ID);
     }
-    return this.usersRepository.findOne(+id);
+    return this.usersRepository.findOne(id);
   }
 
   public async update(id: string, updateUserDto: UpdateUserDto) {

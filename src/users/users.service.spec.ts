@@ -4,14 +4,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserServiceErrorMessages } from '../constants/user-service-error-messages';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from './dto/create-user-dto';
-import mock = jest.mock;
 
 describe('UsersService', () => {
   let service: UsersService;
   const mockRepository = {
     save: jest.fn().mockResolvedValue({}),
     update: jest.fn().mockResolvedValue({}),
-    find: jest.fn().mockResolvedValue({}),
+    findOne: jest.fn().mockResolvedValue({}),
     findAndCount: jest.fn().mockResolvedValue([]),
     remove: jest.fn().mockResolvedValue({}),
   };
@@ -107,6 +106,15 @@ describe('UsersService', () => {
       );
     });
 
+    it('should throw an error when repository method throws', async () => {
+      mockRepository.findAndCount.mockRejectedValue('test-error');
+      try {
+        await service.findAll(0, 10);
+      } catch (e) {
+        expect(e).toBe('test-error');
+      }
+    });
+
     it('should call repository findAndCount method when valid params are passed', async () => {
       const testValues = {
         from: 0,
@@ -136,6 +144,37 @@ describe('UsersService', () => {
         from: testValues.from,
         size: testValues.size,
       });
+    });
+  });
+
+  describe('findOne', () => {
+    it('should throw an error when id is not present', async () => {
+      await expect(service.findOne(undefined)).rejects.toThrowError(
+        new Error(UserServiceErrorMessages.INVALID_ID),
+      );
+    });
+
+    it('should throw an error when repository method throws', async () => {
+      mockRepository.findOne.mockRejectedValue(new Error('test-error'));
+      await expect(service.findOne('1')).rejects.toThrowError(
+        new Error('test-error'),
+      );
+    });
+
+    it('should call User Repository findOne method with corresponding id when called with valid param', async () => {
+      mockRepository.findOne.mockResolvedValue('test-user');
+
+      await service.findOne('1');
+
+      expect(mockRepository.findOne).toHaveBeenCalledWith('1');
+    });
+
+    it('should return the user found by findOne method when called with valid param', async () => {
+      mockRepository.findOne.mockResolvedValue('test-user');
+
+      const result = await service.findOne('1');
+
+      expect(result).toBe('test-user');
     });
   });
 });
