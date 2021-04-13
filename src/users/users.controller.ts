@@ -13,7 +13,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FindAllUsersInputModel } from './dto/find-all-users.input.model';
+import { FindAllUsersParamsModel } from './dto/find-all-users-params.model';
 import { Response as Res } from 'express';
 import { UsersApiMessages } from '../constants/users-api-messages';
 
@@ -36,7 +36,7 @@ export class UsersController {
   }
 
   @Get()
-  public async findAll(@Query() params: FindAllUsersInputModel, @Response() response: Res) {
+  public async findAll(@Query() params: FindAllUsersParamsModel, @Response() response: Res) {
     if (params.from && !params.size) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         message: UsersApiMessages.MISSING_PAGING_PARAMS,

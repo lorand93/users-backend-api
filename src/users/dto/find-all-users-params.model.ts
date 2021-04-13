@@ -1,6 +1,6 @@
 import { IsNumberString, IsOptional } from 'class-validator';
 
-export class FindAllUsersInputModel {
+export class FindAllUsersParamsModel {
   @IsOptional()
   @IsNumberString()
   public from: string;
