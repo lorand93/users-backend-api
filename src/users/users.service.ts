@@ -14,7 +14,7 @@ export class UsersService {
   ) {
   }
 
-  public create(createUserDto: CreateUserDto) {
+  public async create(createUserDto: CreateUserDto) {
     if (!createUserDto) {
       throw new Error(UserServiceErrorMessages.USER_IS_UNDEFINED);
     }
@@ -46,23 +46,26 @@ export class UsersService {
   }
 
   public async update(id: string, updateUserDto: UpdateUserDto) {
+    // because sqlite3 does not return a number of affected rows I have to check if the entry also exists https://stackoverflow.com/questions/24030383/getting-the-rows-affected-by-update-in-sqlite3-without-extra-query
+
     if (!id) {
       throw new Error(UserServiceErrorMessages.NO_ID_PROVIDED);
     }
     if (!updateUserDto) {
       throw new Error(UserServiceErrorMessages.NO_UPDATED_USER_PROVIDED);
     }
-    // because sqlite3 does not return a number of affected rows I have to check if the entry also exists https://stackoverflow.com/questions/24030383/getting-the-rows-affected-by-update-in-sqlite3-without-extra-query
     await this.usersRepository.update(id, updateUserDto);
     return this.usersRepository.findOne(id);
   }
 
   public async remove(id: string) {
+    // because sqlite3 does not return a number of affected rows I have to check if the entry also exists https://stackoverflow.com/questions/24030383/getting-the-rows-affected-by-update-in-sqlite3-without-extra-query
+
     if (!id) {
       throw new Error(UserServiceErrorMessages.NO_ID_PROVIDED);
     }
-    // because sqlite3 does not return a number of affected rows I have to check if the entry also exists https://stackoverflow.com/questions/24030383/getting-the-rows-affected-by-update-in-sqlite3-without-extra-query
     const existingUser = await this.usersRepository.findOne(id);
+
     if (!existingUser) {
       return false;
     }
