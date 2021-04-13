@@ -4,14 +4,15 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserServiceErrorMessages } from '../constants/user-service-error-messages';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from './dto/create-user-dto';
+import mock = jest.mock;
 
 describe('UsersService', () => {
   let service: UsersService;
   const mockRepository = {
     save: jest.fn().mockResolvedValue({}),
     update: jest.fn().mockResolvedValue({}),
-    find: jest.fn().mockResolvedValue('test-find'),
-    findAll: jest.fn().mockResolvedValue('test-find-all'),
+    find: jest.fn().mockResolvedValue({}),
+    findAndCount: jest.fn().mockResolvedValue([]),
     remove: jest.fn().mockResolvedValue({}),
   };
 
@@ -38,7 +39,7 @@ describe('UsersService', () => {
   describe('create', () => {
     it('should throw an error when createUserDto is undefined', async () => {
       await expect(service.create(undefined)).rejects.toThrowError(
-        new Error(UserServiceErrorMessages.USER_IS_UNDEFINED),
+        new Error(UserServiceErrorMessages.INVALID_USER_PROVIDED),
       );
     });
 
@@ -84,24 +85,57 @@ describe('UsersService', () => {
   describe('findAll', () => {
     it('should throw an error when size and from params are not present', async () => {
       await expect(service.findAll(null, undefined)).rejects.toThrowError(
-        new Error(UserServiceErrorMessages.UNDEFINED_FROM_AND_SIZE_PARAMETERS),
+        new Error(UserServiceErrorMessages.INVALID_FROM_AND_SIZE_PARAMETERS),
       );
     });
 
     it('should throw an error when only size is not present', async () => {
       await expect(service.findAll(0, undefined)).rejects.toThrowError(
-        new Error(UserServiceErrorMessages.UNDEFINED_FROM_AND_SIZE_PARAMETERS),
+        new Error(UserServiceErrorMessages.INVALID_FROM_AND_SIZE_PARAMETERS),
       );
     });
 
     it('should throw an error when only from param is not present', async () => {
       await expect(service.findAll(undefined, 10)).rejects.toThrowError(
-        new Error(UserServiceErrorMessages.UNDEFINED_FROM_AND_SIZE_PARAMETERS),
+        new Error(UserServiceErrorMessages.INVALID_FROM_AND_SIZE_PARAMETERS),
+      );
+    });
+
+    it('should throw an error when negative values are passed to from and size', async () => {
+      await expect(service.findAll(-5, -10)).rejects.toThrowError(
+        new Error(UserServiceErrorMessages.INVALID_FROM_AND_SIZE_PARAMETERS),
       );
     });
 
     it('should call repository findAndCount method when valid params are passed', async () => {
-      const result = service.findAll(0, 10);
+      const testValues = {
+        from: 0,
+        size: 10,
+      };
+
+      await service.findAll(testValues.from, testValues.size);
+
+      expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        take: testValues.size,
+        skip: testValues.from,
+      });
+    });
+
+    it('should call return the results from findAndCount method when successfully ran', async () => {
+      const testValues = {
+        from: 0,
+        size: 10,
+      };
+
+      mockRepository.findAndCount.mockResolvedValue(['result', 1000]);
+      const result = await service.findAll(testValues.from, testValues.size);
+
+      expect(result).toEqual({
+        result: 'result',
+        totalCount: 1000,
+        from: testValues.from,
+        size: testValues.size,
+      });
     });
   });
 });
