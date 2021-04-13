@@ -35,6 +35,10 @@ describe('UsersService', () => {
     service = module.get<UsersService>(UsersService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('create', () => {
     it('should throw an error when createUserDto is undefined', async () => {
       await expect(service.create(undefined)).rejects.toThrowError(
@@ -72,7 +76,7 @@ describe('UsersService', () => {
     });
 
     it('should throw an error when UserRepository save throws', async () => {
-      mockRepository.save.mockRejectedValue('test-error');
+      mockRepository.save.mockRejectedValueOnce('test-error');
       try {
         await service.create(createTestUserDto);
       } catch (e) {
@@ -107,11 +111,11 @@ describe('UsersService', () => {
     });
 
     it('should throw an error when repository method throws', async () => {
-      mockRepository.findAndCount.mockRejectedValue('test-error');
+      mockRepository.findAndCount.mockRejectedValueOnce('test-error2');
       try {
         await service.findAll(0, 10);
       } catch (e) {
-        expect(e).toBe('test-error');
+        expect(e).toBe('test-error2');
       }
     });
 
@@ -155,7 +159,7 @@ describe('UsersService', () => {
     });
 
     it('should throw an error when repository method throws', async () => {
-      mockRepository.findOne.mockRejectedValue(new Error('test-error'));
+      mockRepository.findOne.mockRejectedValueOnce(new Error('test-error'));
       await expect(service.findOne('1')).rejects.toThrowError(
         new Error('test-error'),
       );
