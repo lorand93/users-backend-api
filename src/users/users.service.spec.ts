@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserServiceErrorMessages } from '../constants/user-service-error-messages';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from './dto/create-user-dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -20,6 +21,12 @@ describe('UsersService', () => {
     givenName: 'Mike',
     email: 'mike.millers@email.com',
   });
+
+  const updateTestUserDto = new UpdateUserDto({
+    id: '1',
+    familyName: 'Millers',
+  });
+
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -181,4 +188,58 @@ describe('UsersService', () => {
       expect(result).toBe('test-user');
     });
   });
+
+  describe('update', () => {
+    it('should throw an error when updateUserDto is undefined', async () => {
+      await expect(service.update('1', undefined)).rejects.toThrowError(
+        new Error(UserServiceErrorMessages.INVALID_USER_PROVIDED),
+      );
+    });
+
+    it('should throw an error when id is undefined', async () => {
+      await expect(service.update(null, undefined)).rejects.toThrowError(
+        new Error(UserServiceErrorMessages.INVALID_ID),
+      );
+    });
+
+    it('should call User Repository update method when called with UpdateUserDto', async () => {
+      const updateSpy = jest.spyOn(mockRepository, 'update').mockResolvedValue('test-value');
+
+      await service.update(updateTestUserDto.id, updateTestUserDto);
+
+      expect(updateSpy).toHaveBeenCalledWith(updateTestUserDto.id, updateTestUserDto);
+    });
+
+    it('should call User Repository findOne method after update was successfully called', async () => {
+      await service.update(updateTestUserDto.id, updateTestUserDto);
+
+      expect(mockRepository.findOne).toHaveBeenCalledWith(updateTestUserDto.id);
+    });
+
+    it('should return the result of User Repository findOne method when called with valid params', async () => {
+      mockRepository.findOne.mockResolvedValue(updateTestUserDto);
+      const result = await service.update(updateTestUserDto.id, updateTestUserDto);
+
+      expect(result).toEqual(updateTestUserDto);
+    });
+
+    it('should throw an error when UserRepository update throws', async () => {
+      mockRepository.update.mockRejectedValueOnce('test-error');
+      try {
+        await service.update(updateTestUserDto.id, updateTestUserDto);
+      } catch (e) {
+        expect(e).toBe('test-error');
+      }
+    });
+
+    it('should throw an error when UserRepository findOne throws', async () => {
+      mockRepository.findOne.mockRejectedValueOnce('test-error');
+      try {
+        await service.update(updateTestUserDto.id, updateTestUserDto);
+      } catch (e) {
+        expect(e).toBe('test-error');
+      }
+    });
+  });
+
 });
