@@ -13,7 +13,7 @@ describe('UsersService', () => {
     update: jest.fn().mockResolvedValue({}),
     findOne: jest.fn().mockResolvedValue({}),
     findAndCount: jest.fn().mockResolvedValue([]),
-    remove: jest.fn().mockResolvedValue({}),
+    delete: jest.fn().mockResolvedValue({}),
   };
 
   const createTestUserDto = new CreateUserDto({
@@ -210,10 +210,10 @@ describe('UsersService', () => {
       expect(updateSpy).toHaveBeenCalledWith(updateTestUserDto.id, updateTestUserDto);
     });
 
-    it('should call User Repository findOne method after update was successfully called', async () => {
+    it('should call User Repository findOne twice if update was successfully done', async () => {
       await service.update(updateTestUserDto.id, updateTestUserDto);
 
-      expect(mockRepository.findOne).toHaveBeenCalledWith(updateTestUserDto.id);
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(2);
     });
 
     it('should return the result of User Repository findOne method when called with valid params', async () => {
@@ -236,6 +236,72 @@ describe('UsersService', () => {
       mockRepository.findOne.mockRejectedValueOnce('test-error');
       try {
         await service.update(updateTestUserDto.id, updateTestUserDto);
+      } catch (e) {
+        expect(e).toBe('test-error');
+      }
+    });
+  });
+
+  describe('update', () => {
+    it('should throw an error when id is undefined', async () => {
+      await expect(service.remove(undefined)).rejects.toThrowError(
+        new Error(UserServiceErrorMessages.INVALID_ID),
+      );
+    });
+
+    it('should call User Repository findOne method when called with valid id', async () => {
+      const findOneSpy = jest.spyOn(mockRepository, 'findOne').mockResolvedValue('test-value');
+
+      await service.remove('id');
+
+      expect(findOneSpy).toHaveBeenCalledWith('id');
+    });
+
+    it('should not call User Repository remove method if there is no user with the given id', async () => {
+      mockRepository.findOne.mockResolvedValue(undefined);
+
+      await service.remove('id');
+
+      expect(mockRepository.delete).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return false when there is no user with the given id', async () => {
+      mockRepository.findOne.mockResolvedValue(undefined);
+
+      const result = await service.remove('id');
+
+      expect(result).toBe(false);
+    });
+
+    it('should call User Repository remove method if the user exists', async () => {
+      mockRepository.findOne.mockResolvedValue({ id: 'existing-user-id' });
+
+      await service.remove('existing-user-id');
+
+      expect(mockRepository.delete).toHaveBeenCalledWith('existing-user-id')
+    });
+
+    it('should call return true if user was deleted successfully', async () => {
+      mockRepository.findOne.mockResolvedValue({ id: 'existing-user-id' });
+
+      const result = await service.remove('existing-user-id');
+
+      expect(result).toBe(true);
+    });
+
+    it('should throw an error when UserRepository remove throws', async () => {
+      mockRepository.delete.mockRejectedValueOnce('test-error');
+      try {
+        await service.remove('test-id');
+      } catch (e) {
+        expect(e).toBe('test-error');
+      }
+    });
+
+    it('should throw an error when UserRepository findOne throws', async () => {
+      mockRepository.delete.mockRejectedValueOnce('test-error');
+      try {
+        await service.remove('test-id');
       } catch (e) {
         expect(e).toBe('test-error');
       }
