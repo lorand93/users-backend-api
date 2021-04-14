@@ -53,7 +53,7 @@ $ npm run test:e2e
 - they test actions against an actual database
 
 
-##Project requirements
+## Project requirements
 Your solution _must_:
 
 - Expose a **user** model. It's reasonable to expect that a user has (at least) the following attributes:
