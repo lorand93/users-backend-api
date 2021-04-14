@@ -144,4 +144,6 @@ describe('End to end tests for the User Controller', () => {
       done();
     });
   });
+
+  //TODO add tests for update, read and findAll
 });

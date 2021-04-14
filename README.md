@@ -49,6 +49,8 @@ In order to run e2e tests you can run:
 # run e2e tests
 $ npm run test:e2e
 ```
+- the e2e tests use a test database
+- they test actions against an actual database
 
 ## Stay in touch
 
