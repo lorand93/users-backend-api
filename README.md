@@ -10,6 +10,8 @@ For e2e testing I chose Supertest, and I wrote e2e tests for the users routes.
 You can access the documentation after starting the app by going to
 http://localhost:3000/docs/
 
+Exported the postman collection to help with testing the functionality.
+
 ## Installation
 For developing and running this project I recommend using node v14.16.1
 In order to install app dependencies you have to run:
