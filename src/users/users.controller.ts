@@ -61,15 +61,14 @@ export class UsersController {
         parseInt(params.from, 10) || 0,
         parseInt(params.size, 10) || 10,
       );
-      response.status(HttpStatus.CREATED).json(result);
+      return response.status(HttpStatus.OK).json(result);
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_GETTING_USERS}, error: ${e ? e.toString() : ''}`);
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: UsersApiMessages.ERROR_WHILE_GETTING_USERS,
         error: e ? e.toString() : '',
       });
     }
-
   }
 
   @Get(':id')
@@ -88,11 +87,11 @@ export class UsersController {
           id,
         });
       }
-      response.status(HttpStatus.OK).json(result);
+      return response.status(HttpStatus.OK).json(result);
 
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_GETTING_USER} ${id}, error: ${e ? e.toString() : ''}`);
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: UsersApiMessages.ERROR_WHILE_GETTING_USER + id,
         error: e ? e.toString() : '',
       });
@@ -148,7 +147,7 @@ export class UsersController {
         });
       }
 
-      return response.status(HttpStatus.ACCEPTED).json();
+      return response.status(HttpStatus.OK).json();
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_DELETING_USER} ${id}, error: ${e ? e.toString() : ''}`);
       return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
