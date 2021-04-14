@@ -25,10 +25,11 @@ export class UsersController {
   @Post()
   public async create(@Body() createUserDto: CreateUserDto, @Response() response: Res) {
     try {
-      return await this.usersService.create(createUserDto);
+      const result = await this.usersService.create(createUserDto);
+      return response.status(HttpStatus.CREATED).json(result);
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_CREATING_NEW_USER}, error: ${e ? e.toString() : ''}`);
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: UsersApiMessages.ERROR_WHILE_CREATING_NEW_USER,
         error: e ? e.toString() : '',
       });
@@ -72,10 +73,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  public async findOne(
-    @Param('id') id: string,
-    @Response() response: Res,
-  ) {
+  public async findOne(@Param('id') id: string,@Response() response: Res) {
     if (!id || parseInt(id, 10) <= 0) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         message: UsersApiMessages.WRONG_ID_VALUE,
@@ -133,10 +131,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  public async remove(
-    @Param('id') id: string,
-    @Response() response: Res,
-  ) {
+  public async remove(@Param('id') id: string,@Response() response: Res) {
     if (!id || parseInt(id, 10) <= 0) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         message: UsersApiMessages.WRONG_ID_VALUE,
