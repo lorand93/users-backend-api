@@ -1,7 +1,3 @@
-<p align="center">
-  <a href="https://www.holidayextras.com/" target="blank"><img src="https://d17s4kc6349e5h.cloudfront.net/holidayextras/assets/images/logos/HolidayExtras-logo-horizontal-transparent.svg" width="200" alt="Logo" /></a>
-</p>
-
 ## Description
 This is an implementation for the holiday extras coding challenge.
 
@@ -11,7 +7,11 @@ For unit testing I chose Jest, and I wrote unit tests for the services and contr
 
 For e2e testing I chose Supertest, and I wrote e2e tests for the users routes.
 
+You can access the documentation after starting the app by going to
+http://localhost:3000/docs/
+
 ## Installation
+For developing and running this project I recommend using node v14.16.1
 In order to install app dependencies you have to run:
 ```bash
 $ npm install
@@ -52,7 +52,23 @@ $ npm run test:e2e
 - the e2e tests use a test database
 - they test actions against an actual database
 
+
+##Project requirements
+Your solution _must_:
+
+- Expose a **user** model. It's reasonable to expect that a user has (at least) the following attributes:
+    - **`id`** - _a unique user id_
+    - **`email`** - _a user's email address_
+    - **`givenName`** - _in the UK this is the user's first name_
+    - **`familyName`** - _in the UK this is the user's last name_
+    - **`created`** - _the date and time the user was added_
+- Have the ability to persist user information for at least the lifetime of the test.
+- Expose functionality to create, read, update and delete (CRUD) users.
+- Be easily consumable by a plain HTTP client (e.g. cURL or Postman) or, if using a transport other than HTTP, be trivial to write a client application to consume it.
+
+
 ## Stay in touch
 
 - Author - [Lorand Sandor](https://www.linkedin.com/in/sandorlorand/) 
 - Email: [sandor.lorand93][@][gmail.com]
+
