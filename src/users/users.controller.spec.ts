@@ -221,12 +221,6 @@ describe('UsersController', () => {
     });
 
     it('should return an error message if service method throws', async () => {
-      const mockResponse = {
-        result: [],
-        totalCount: 0,
-        from: 0,
-        size: 0,
-      };
       usersService.findAll.onFirstCall().rejects('test-error');
 
       const result = await controller.findAll({ size: '10', from: '0' } as FindAllUsersParamsModel, response);
@@ -240,6 +234,7 @@ describe('UsersController', () => {
   });
 
   describe('findOne', () => {
+    //TODO implement rest of test cases
     it('should call userService.findOne method when all params are correctly provided', async () => {
       const statusSpy = jest.spyOn(response, 'status');
 
@@ -256,6 +251,7 @@ describe('UsersController', () => {
   });
 
   describe('remove', () => {
+    //TODO implement rest of test cases
     it('should call userService.remove method when all params are correctly provided', async () => {
       const statusSpy = jest.spyOn(response, 'status');
 
