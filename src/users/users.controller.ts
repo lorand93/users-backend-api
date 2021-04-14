@@ -76,7 +76,7 @@ export class UsersController {
   public async findOne(@Param('id') id: string, @Response() response: Res) {
     if (!id) {
       return response.status(HttpStatus.BAD_REQUEST).json({
-        message: UsersApiMessages.WRONG_ID_VALUE,
+        message: UsersApiMessages.INVALID_ID,
       });
     }
 
@@ -105,9 +105,9 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
     @Response() response: Res,
   ) {
-    if (!id || parseInt(id, 10) <= 0) {
+    if (!id) {
       return response.status(HttpStatus.BAD_REQUEST).json({
-        message: UsersApiMessages.WRONG_ID_VALUE,
+        message: UsersApiMessages.INVALID_ID,
         id,
       });
     }
@@ -116,14 +116,14 @@ export class UsersController {
       const result = await this.usersService.update(id, updateUserDto);
       if (!result) {
         return response.status(HttpStatus.BAD_REQUEST).json({
-          message: UsersApiMessages.NO_USER_UPDATED,
+          message: UsersApiMessages.INVALID_ID,
           id,
         });
       }
       return response.status(HttpStatus.OK).json(result);
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_UPDATING_USER} ${id}, error: ${e ? e.toString() : ''}`);
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: UsersApiMessages.ERROR_WHILE_UPDATING_USER + id,
         error: e ? e.toString() : '',
       });
@@ -134,7 +134,7 @@ export class UsersController {
   public async remove(@Param('id') id: string, @Response() response: Res) {
     if (!id || parseInt(id, 10) <= 0) {
       return response.status(HttpStatus.BAD_REQUEST).json({
-        message: UsersApiMessages.WRONG_ID_VALUE,
+        message: UsersApiMessages.INVALID_ID,
         id,
       });
     }
@@ -151,7 +151,7 @@ export class UsersController {
       return response.status(HttpStatus.ACCEPTED).json();
     } catch (e) {
       console.error(`${UsersApiMessages.ERROR_WHILE_DELETING_USER} ${id}, error: ${e ? e.toString() : ''}`);
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: UsersApiMessages.ERROR_WHILE_DELETING_USER + id,
         error: e ? e.toString() : '',
       });
