@@ -25,7 +25,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
-import { IValidationFailedResponse } from '../constants/validation-failed-response.interface';
+import { IValidationFailedResponse } from '../constants/api-response.dto/class-validation-failed-response.model';
 import { OkResponseModel } from '../constants/api-response.dto/ok-response.model';
 import { ParamsValidationFailedResponseModel } from '../constants/api-response.dto/params-validation-failed-response.model';
 import { InternalServerErrorResponseModel } from '../constants/api-response.dto/internal-server-error-response.model';
