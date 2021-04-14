@@ -9,6 +9,7 @@ import {
   Query,
   Response,
   HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -16,6 +17,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { FindAllUsersParamsModel } from './dto/find-all-users-params.model';
 import { Response as Res } from 'express';
 import { UsersApiMessages } from '../constants/users-api-messages';
+import { ApiBadRequestResponse, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { User } from '../entities/user.entity';
+import { IValidationFailedResponse } from '../constants/validation-failed-response.interface';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +27,10 @@ export class UsersController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBody({type: CreateUserDto})
+  @ApiOkResponse({description: 'Created User', type: User})
+  @ApiBadRequestResponse({description: 'Validation failed response', type: IValidationFailedResponse})
   public async create(@Body() createUserDto: CreateUserDto, @Response() response: Res) {
     try {
       const result = await this.usersService.create(createUserDto);
