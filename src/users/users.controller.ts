@@ -73,8 +73,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  public async findOne(@Param('id') id: string,@Response() response: Res) {
-    if (!id || parseInt(id, 10) <= 0) {
+  public async findOne(@Param('id') id: string, @Response() response: Res) {
+    if (!id) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         message: UsersApiMessages.WRONG_ID_VALUE,
       });
@@ -131,7 +131,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  public async remove(@Param('id') id: string,@Response() response: Res) {
+  public async remove(@Param('id') id: string, @Response() response: Res) {
     if (!id || parseInt(id, 10) <= 0) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         message: UsersApiMessages.WRONG_ID_VALUE,
